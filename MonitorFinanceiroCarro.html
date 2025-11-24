@@ -598,6 +598,14 @@
     }
   </style>
 </head>
+  <link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#2563eb">
+
+<script>
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("service-worker.js");
+  }
+</script>
 <body>
   <div class="container">
     <h1>💰 Sistema Financeiro Diário</h1>
@@ -1546,4 +1554,5 @@
     }
   </script>
 </body>
+
 </html>
