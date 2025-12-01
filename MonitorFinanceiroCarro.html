@@ -1,0 +1,2026 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sistema Financeiro Diário - Carro</title>
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --danger: #ef4444;
+      --danger-dark: #dc2626;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --card: #fff;
+      --muted: #6b7280;
+      --light-bg: #f8fafc;
+      --border: #e2e8f0;
+    }
+    
+    * {
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: #f1f5f9;
+      margin: 0;
+      padding: 16px;
+      line-height: 1.5;
+      color: #334155;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: var(--card);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    }
+    
+    h1 {
+      margin: 0 0 16px;
+      color: #1e293b;
+      font-size: 24px;
+      text-align: center;
+    }
+    
+    h2 {
+      margin-top: 0;
+      color: #334155;
+      font-size: 20px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+    }
+    
+    h3 {
+      margin-top: 0;
+      color: #475569;
+      font-size: 18px;
+    }
+    
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+      overflow-x: auto;
+    }
+    
+    .tab {
+      flex: 1;
+      padding: 12px 16px;
+      background: #f8fafc;
+      border-radius: 8px;
+      text-align: center;
+      cursor: pointer;
+      user-select: none;
+      white-space: nowrap;
+      font-weight: 500;
+      transition: all 0.2s;
+      border: 1px solid transparent;
+    }
+    
+    .tab.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+    
+    .tab:not(.active):hover {
+      background: #e2e8f0;
+    }
+    
+    .aba {
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .aba.active {
+      display: block;
+    }
+    
+    label {
+      display: block;
+      margin-top: 16px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #475569;
+    }
+    
+    input[type="number"], input[type="text"], input[type="date"] {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-top: 6px;
+      font-size: 16px;
+      transition: border 0.2s;
+    }
+    
+    input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+    
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    
+    button {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 14px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 16px;
+      font-weight: 600;
+      font-size: 16px;
+      transition: background 0.2s;
+      width: 100%;
+    }
+    
+    button:hover {
+      background: var(--primary-dark);
+    }
+    
+    button:active {
+      transform: translateY(1px);
+    }
+    
+    .btn-danger {
+      background: var(--danger);
+    }
+    
+    .btn-danger:hover {
+      background: var(--danger-dark);
+    }
+    
+    .btn-success {
+      background: var(--success);
+    }
+    
+    .btn-warning {
+      background: var(--warning);
+    }
+    
+    .resultado {
+      background: var(--light-bg);
+      border-radius: 12px;
+      padding: 16px;
+      margin-top: 16px;
+      border-left: 4px solid var(--primary);
+    }
+    
+    .resultado p {
+      margin: 8px 0;
+    }
+    
+    .alert {
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin: 16px 0;
+      font-weight: 500;
+    }
+    
+    .alert-success {
+      background: #d1fae5;
+      color: #065f46;
+      border-left: 4px solid var(--success);
+    }
+    
+    .alert-warning {
+      background: #fef3c7;
+      color: #92400e;
+      border-left: 4px solid var(--warning);
+    }
+    
+    .alert-danger {
+      background: #fee2e2;
+      color: #991b1b;
+      border-left: 4px solid var(--danger);
+    }
+    
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 16px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    
+    th, td {
+      padding: 12px;
+      border-bottom: 1px solid var(--border);
+      text-align: center;
+    }
+    
+    th {
+      background: #f8fafc;
+      font-weight: 600;
+      color: #475569;
+    }
+    
+    tr:last-child td {
+      border-bottom: none;
+    }
+    
+    .small {
+      font-size: 13px;
+      color: var(--muted);
+    }
+    
+    .actions {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+    }
+    
+    .actions button {
+      margin: 0;
+      padding: 8px 12px;
+      font-size: 14px;
+      width: auto;
+    }
+    
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      border: 1px solid var(--border);
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin: 16px 0;
+    }
+    
+    .stat-card {
+      background: white;
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      border: 1px solid var(--border);
+    }
+    
+    .stat-value {
+      font-size: 24px;
+      font-weight: 700;
+      margin: 8px 0;
+    }
+    
+    .stat-label {
+      font-size: 14px;
+      color: var(--muted);
+    }
+    
+    .positive {
+      color: var(--success);
+    }
+    
+    .negative {
+      color: var(--danger);
+    }
+    
+    .meta-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 16px 0;
+      padding: 12px 16px;
+      background: #f0f9ff;
+      border-radius: 8px;
+      border-left: 4px solid var(--primary);
+    }
+    
+    /* Estilos do Calendário */
+    .calendario-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    
+    .calendario-nav {
+      display: flex;
+      gap: 8px;
+    }
+    
+    .calendario-nav button {
+      width: auto;
+      margin: 0;
+      padding: 8px 12px;
+    }
+    
+    .calendario-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 8px;
+    }
+    
+    .calendario-dia {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 8px;
+      min-height: 120px;
+      background: white;
+      transition: all 0.2s;
+    }
+    
+    .calendario-dia:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    }
+    
+    .calendario-dia.today {
+      border-color: var(--primary);
+      background: #f0f9ff;
+    }
+    
+    .calendario-dia.has-data {
+      border-left: 4px solid var(--primary);
+    }
+    
+    .calendario-dia.meta-atingida {
+      background: #d1fae5 !important;
+    }
+    
+    .calendario-dia.meta-nao-atingida {
+      background: #fee2e2 !important;
+    }
+    
+    .calendario-dia-header {
+      font-weight: bold;
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .calendario-dia-content {
+      font-size: 12px;
+    }
+    
+    .calendario-dia-content p {
+      margin: 4px 0;
+    }
+    
+    .calendario-dia-num {
+      font-size: 16px;
+    }
+    
+    .calendario-dia-semana {
+      font-size: 10px;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+    
+    .dia-vazio {
+      background: #f8fafc;
+      border: 1px dashed var(--border);
+    }
+    
+    .combustivel-anterior {
+      background: #fef3c7;
+      padding: 8px;
+      border-radius: 6px;
+      margin-top: 8px;
+      font-size: 11px;
+    }
+    
+    /* Modal de Edição */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .modal.active {
+      display: flex;
+    }
+    
+    .modal-content {
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      width: 90%;
+      max-width: 500px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+    
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    
+    .modal-title {
+      margin: 0;
+      font-size: 20px;
+    }
+    
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: var(--muted);
+      width: auto;
+      margin: 0;
+      padding: 0;
+    }
+    
+    .modal-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+    }
+    
+    .modal-actions button {
+      flex: 1;
+    }
+    
+    /* Seção de Backups */
+    .backup-list {
+      margin-top: 16px;
+    }
+    
+    .backup-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      margin-bottom: 8px;
+      background: white;
+    }
+    
+    .backup-info {
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .backup-name {
+      font-weight: 600;
+    }
+    
+    .backup-date {
+      font-size: 12px;
+      color: var(--muted);
+    }
+    
+    .backup-actions {
+      display: flex;
+      gap: 8px;
+    }
+    
+    .backup-actions button {
+      margin: 0;
+      padding: 6px 12px;
+      font-size: 12px;
+      width: auto;
+    }
+    
+    /* Barra de Progresso */
+    .progress-bar {
+      height: 20px;
+      background: #e2e8f0;
+      border-radius: 10px;
+      overflow: hidden;
+      margin: 8px 0;
+      position: relative;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      border-radius: 10px;
+      transition: width 0.3s ease;
+    }
+    
+    .progress-success {
+      background: var(--success);
+    }
+    
+    .progress-warning {
+      background: var(--warning);
+    }
+    
+    .progress-danger {
+      background: var(--danger);
+    }
+    
+    .progress-labels {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 4px;
+      font-size: 12px;
+    }
+    
+    /* Semáforo */
+    .semaforo {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      margin: 20px 0;
+    }
+    
+    .semaforo-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .semaforo-bolha {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      opacity: 0.3;
+    }
+    
+    .semaforo-bolha.active {
+      opacity: 1;
+      transform: scale(1.1);
+      box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    }
+    
+    .semaforo-verde {
+      background: var(--success);
+    }
+    
+    .semaforo-amarelo {
+      background: var(--warning);
+    }
+    
+    .semaforo-vermelho {
+      background: var(--danger);
+    }
+    
+    .semaforo-label {
+      font-size: 14px;
+      font-weight: 600;
+      text-align: center;
+    }
+    
+    /* Barra do Carro */
+    .carro-progress-container {
+      margin: 20px 0;
+    }
+    
+    .semanas-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-top: 12px;
+    }
+    
+    .semana-card {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      text-align: center;
+    }
+    
+    .semana-card.active {
+      background: #dbeafe;
+      border-color: var(--primary);
+    }
+    
+    .semana-card.completed {
+      background: #d1fae5;
+      border-color: var(--success);
+    }
+    
+    @media (max-width: 768px) {
+      .container {
+        padding: 16px;
+        border-radius: 12px;
+      }
+      
+      h1 {
+        font-size: 20px;
+      }
+      
+      .tabs {
+        flex-direction: column;
+      }
+      
+      .grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      table {
+        font-size: 14px;
+      }
+      
+      th, td {
+        padding: 8px 4px;
+      }
+      
+      .actions {
+        flex-direction: column;
+      }
+      
+      .calendario-grid {
+        grid-template-columns: repeat(7, 1fr);
+        gap: 4px;
+      }
+      
+      .calendario-dia {
+        min-height: 80px;
+        padding: 6px 4px;
+      }
+      
+      .calendario-dia-num {
+        font-size: 14px;
+      }
+      
+      .calendario-dia-content {
+        font-size: 10px;
+      }
+      
+      .modal-content {
+        width: 95%;
+        padding: 16px;
+      }
+      
+      .backup-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+      
+      .backup-actions {
+        width: 100%;
+        justify-content: space-between;
+      }
+      
+      .backup-actions button {
+        flex: 1;
+      }
+      
+      .semaforo {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .semanas-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .calendario-grid {
+        grid-template-columns: repeat(7, 1fr);
+      }
+      
+      .calendario-dia {
+        min-height: 70px;
+        padding: 4px 2px;
+      }
+      
+      .calendario-dia-num {
+        font-size: 12px;
+      }
+      
+      .calendario-dia-content {
+        display: none;
+      }
+      
+      .semanas-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>💰 Sistema Financeiro Diário - Carro</h1>
+    
+    <div class="tabs" id="tabs">
+      <div class="tab active" data-tab="calculo">📊 Cálculo Diário</div>
+      <div class="tab" data-tab="config">⚙️ Configurações</div>
+      <div class="tab" data-tab="calendario">📅 Calendário</div>
+      <div class="tab" data-tab="relatorios">📈 Relatórios</div>
+      <div class="tab" data-tab="backups">💾 Backups</div>
+    </div>
+    
+    <div id="calculo" class="aba active">
+      <h2>Cálculo Diário</h2>
+      
+      <div class="card">
+        <div class="grid">
+          <div>
+            <label for="inpData">Data do Registro</label>
+            <input type="date" id="inpData" />
+          </div>
+          <div>
+            <label for="inpBruto">Valor Bruto do Dia (R$)</label>
+            <input type="number" id="inpBruto" step="0.01" placeholder="Ex: 250.00" />
+          </div>
+          <div>
+            <label for="inpComb">Combustível Gasto (R$)</label>
+            <input type="number" id="inpComb" step="0.01" placeholder="Ex: 50.00" />
+          </div>
+        </div>
+
+        <div class="grid">
+          <div>
+            <label for="carroDiario">Custo Diário do Carro (R$)</label>
+            <input type="text" id="carroDiario" disabled />
+          </div>
+          <div>
+            <label for="metaDiaria">Meta Diária (R$)</label>
+            <input type="text" id="metaDiaria" disabled />
+          </div>
+          <div>
+            <label for="metaProximoDia">Meta para Amanhã (R$)</label>
+            <input type="text" id="metaProximoDia" disabled />
+          </div>
+        </div>
+
+        <div id="combustivelAnteriorInfo" class="combustivel-anterior" style="display: none;">
+          <strong>Combustível do dia anterior:</strong> R$ <span id="combustivelAnteriorValor">0.00</span>
+        </div>
+
+        <button id="btnAdd">✅ Registrar Dia</button>
+      </div>
+
+      <div id="resCalc"></div>
+    </div>
+
+    <div id="config" class="aba">
+      <h2>Configurações</h2>
+      
+      <div class="card">
+        <label for="inpCarroMensal">Valor Mensal do Carro (R$)</label>
+        <input type="number" id="inpCarroMensal" step="0.01" placeholder="Ex: 1200.00" />
+
+        <label for="inpMetaMensal">Meta Mensal (R$)</label>
+        <input type="number" id="inpMetaMensal" step="0.01" placeholder="Ex: 5000.00" />
+
+        <label for="inpDiasMes">Dias Trabalhados no Mês</label>
+        <input type="number" id="inpDiasMes" placeholder="Ex: 22" />
+
+        <div style="display: flex; gap: 12px; margin-top: 20px;">
+          <button id="btnSaveConfig">💾 Salvar Configurações</button>
+          <button id="btnResetConfig" class="btn-danger">🔄 Resetar</button>
+        </div>
+      </div>
+
+      <div id="resConfig"></div>
+    </div>
+
+    <div id="calendario" class="aba">
+      <h2>Calendário Financeiro</h2>
+      
+      <div class="card">
+        <div class="calendario-header">
+          <h3 id="calendarioMesAno">Fevereiro 2024</h3>
+          <div class="calendario-nav">
+            <button id="btnPrevMonth">◀</button>
+            <button id="btnToday">Hoje</button>
+            <button id="btnNextMonth">▶</button>
+          </div>
+        </div>
+        
+        <div class="calendario-grid" id="calendarioGrid">
+          <!-- Os dias serão preenchidos via JavaScript -->
+        </div>
+      </div>
+    </div>
+
+    <div id="relatorios" class="aba">
+      <h2>Relatórios</h2>
+      
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Total Combustível</div>
+          <div class="stat-value" id="relComb">R$ 0,00</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Total Líquido</div>
+          <div class="stat-value" id="relLiq">R$ 0,00</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Meta Mensal</div>
+          <div class="stat-value" id="relMeta">R$ 0,00</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Falta para Meta</div>
+          <div class="stat-value" id="relFalta">R$ 0,00</div>
+        </div>
+      </div>
+      
+      <div class="card">
+        <h3>Progresso da Meta Mensal</h3>
+        <div id="progressoMetaMensal">
+          <div class="progress-bar">
+            <div id="progressoMetaFill" class="progress-fill progress-success" style="width: 0%"></div>
+          </div>
+          <div class="progress-labels">
+            <span>R$ 0,00</span>
+            <span id="progressoMetaPorcentagem">0%</span>
+            <span id="progressoMetaTotal">R$ 0,00</span>
+          </div>
+        </div>
+        
+        <div class="semaforo" id="semaforoMeta">
+          <div class="semaforo-item">
+            <div class="semaforo-bolha semaforo-vermelho">⬇️</div>
+            <div class="semaforo-label">Aumentar Ritmo</div>
+          </div>
+          <div class="semaforo-item">
+            <div class="semaforo-bolha semaforo-amarelo">⏸️</div>
+            <div class="semaforo-label">Manter Ritmo</div>
+          </div>
+          <div class="semaforo-item">
+            <div class="semaforo-bolha semaforo-verde">⬆️</div>
+            <div class="semaforo-label">Diminuir Ritmo</div>
+          </div>
+        </div>
+        
+        <div class="meta-info">
+          <div>
+            <strong>Meta para amanhã:</strong>
+            <div id="metaAmanhaValor" style="font-size: 20px; font-weight: bold;">R$ 0,00</div>
+          </div>
+          <div style="text-align: right;">
+            <div class="small">Dias registrados: <span id="relDias">0</span></div>
+            <div class="small">Dias restantes: <span id="diasRestantes">0</span></div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="card">
+        <h3>Progresso do Carro</h3>
+        <div class="carro-progress-container">
+          <div class="progress-bar">
+            <div id="progressoCarroFill" class="progress-fill" style="width: 0%; background: var(--primary)"></div>
+          </div>
+          <div class="progress-labels">
+            <span id="carroAcumulado">R$ 0,00</span>
+            <span id="carroPorcentagem">0%</span>
+            <span id="carroTotal">R$ 0,00</span>
+          </div>
+          
+          <div class="semanas-grid" id="semanasCarro">
+            <!-- As semanas serão geradas via JavaScript -->
+          </div>
+        </div>
+      </div>
+
+      <h3>Histórico Diário (Mês Corrente)</h3>
+      
+      <div class="card">
+        <div style="overflow-x: auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Bruto (R$)</th>
+                <th>Combustível (R$)</th>
+                <th>Líquido (R$)</th>
+                <th>Meta Atingida</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="tbDias"></tbody>
+          </table>
+        </div>
+
+        <div style="display: flex; gap: 12px; margin-top: 16px;">
+          <button id="btnClear" class="btn-danger">🗑️ Limpar Histórico</button>
+          <button id="btnExport" class="btn-success">📤 Exportar CSV</button>
+          <button id="btnBackupManual" class="btn-warning">💾 Backup Manual</button>
+        </div>
+      </div>
+    </div>
+    
+    <div id="backups" class="aba">
+      <h2>Backups Mensais</h2>
+      
+      <div class="card">
+        <p>O sistema faz backup automático no último dia de cada mês. Você também pode criar backups manuais.</p>
+        
+        <div style="display: flex; gap: 12px; margin-top: 16px;">
+          <button id="btnBackupNow" class="btn-success">💾 Criar Backup Agora</button>
+        </div>
+      </div>
+      
+      <h3>Backups Salvos</h3>
+      
+      <div class="card">
+        <div id="backupList" class="backup-list">
+          <!-- Lista de backups será preenchida via JavaScript -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal para Edição de Registro -->
+  <div id="modalEdicao" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">Editar Registro</h3>
+        <button class="modal-close">&times;</button>
+      </div>
+      
+      <input type="hidden" id="editId" />
+      
+      <div class="grid">
+        <div>
+          <label for="editData">Data</label>
+          <input type="date" id="editData" />
+        </div>
+        <div>
+          <label for="editBruto">Valor Bruto do Dia (R$)</label>
+          <input type="number" id="editBruto" step="0.01" placeholder="Ex: 250.00" />
+        </div>
+        <div>
+          <label for="editComb">Combustível Gasto (R$)</label>
+          <input type="number" id="editComb" step="0.01" placeholder="Ex: 50.00" />
+        </div>
+      </div>
+      
+      <div class="modal-actions">
+        <button id="btnCancelEdit" class="btn-danger">❌ Cancelar</button>
+        <button id="btnSaveEdit" class="btn-success">💾 Salvar Alterações</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // --- storage keys
+    const KEY_CONFIG = 'sf_config_v4';
+    const KEY_HIST = 'sf_historico_v4';
+    const KEY_BACKUPS = 'sf_backups_v4';
+
+    // --- state
+    let config = {
+      carroMensal: 0,
+      metaMensal: 0,
+      diasTrabalhados: 22
+    };
+    
+    let historico = [];
+    let backups = [];
+    let calendarioMes = new Date().getMonth();
+    let calendarioAno = new Date().getFullYear();
+
+    // --- init
+    document.addEventListener('DOMContentLoaded', () => {
+      // Carregar dados salvos
+      config = loadConfig();
+      historico = loadHistorico();
+      backups = loadBackups();
+      
+      // Configurar interface
+      setupTabs();
+      renderConfigForm();
+      renderCalcFields();
+      renderHistorico();
+      renderCalendario();
+      renderBackups();
+      renderMetaProximoDia();
+      renderSemaforo();
+      renderProgressoCarro();
+
+      // Configurar event listeners
+      document.getElementById('btnSaveConfig').addEventListener('click', onSaveConfig);
+      document.getElementById('btnResetConfig').addEventListener('click', onResetConfig);
+      document.getElementById('btnAdd').addEventListener('click', onAddDia);
+      document.getElementById('btnClear').addEventListener('click', onClear);
+      document.getElementById('btnExport').addEventListener('click', onExportCSV);
+      document.getElementById('btnPrevMonth').addEventListener('click', prevMonth);
+      document.getElementById('btnNextMonth').addEventListener('click', nextMonth);
+      document.getElementById('btnToday').addEventListener('click', goToToday);
+      document.getElementById('btnBackupManual').addEventListener('click', criarBackupManual);
+      document.getElementById('btnBackupNow').addEventListener('click', criarBackupManual);
+      
+      // Event listeners do modal de edição
+      document.getElementById('btnCancelEdit').addEventListener('click', fecharModalEdicao);
+      document.getElementById('btnSaveEdit').addEventListener('click', salvarEdicao);
+      document.querySelector('.modal-close').addEventListener('click', fecharModalEdicao);
+      
+      // Atualizar data atual no campo de data
+      const hoje = new Date();
+      const hojeFormatado = hoje.toISOString().split('T')[0];
+      document.getElementById('inpData').value = hojeFormatado;
+      
+      // Verificar se precisa fazer backup automático
+      verificarBackupAutomatico();
+      
+      // Focar no campo de valor bruto
+      document.getElementById('inpBruto').focus();
+    });
+
+    // --- Tabs
+    function setupTabs(){
+      document.querySelectorAll('.tab').forEach(tab =>{
+        tab.addEventListener('click', ()=>{
+          document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+          document.querySelectorAll('.aba').forEach(a=>a.classList.remove('active'));
+          tab.classList.add('active');
+          const name = tab.getAttribute('data-tab');
+          document.getElementById(name).classList.add('active');
+          if(name==='relatorios') {
+            renderHistorico();
+            renderMetaProximoDia();
+            renderSemaforo();
+            renderProgressoCarro();
+          }
+          if(name==='calendario') renderCalendario();
+          if(name==='backups') renderBackups();
+        });
+      });
+    }
+    // --- Config helpers
+    function loadConfig(){
+      try{ 
+        const raw = localStorage.getItem(KEY_CONFIG); 
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          return {
+            carroMensal: parsed.carroMensal || 0,
+            metaMensal: parsed.metaMensal || 0,
+            diasTrabalhados: parsed.diasTrabalhados || 22
+          };
+        }
+        return {carroMensal:0, metaMensal:0, diasTrabalhados:22};
+      } catch(e) {
+        console.error("Erro ao carregar configurações:", e);
+        return {carroMensal:0, metaMensal:0, diasTrabalhados:22};
+      }
+    }
+    
+    function saveConfig(){ 
+      localStorage.setItem(KEY_CONFIG, JSON.stringify(config)); 
+    }
+    
+    function renderConfigForm(){
+      document.getElementById('inpCarroMensal').value = config.carroMensal;
+      document.getElementById('inpMetaMensal').value = config.metaMensal;
+      document.getElementById('inpDiasMes').value = config.diasTrabalhados;
+      updateConfigSummary();
+    }
+
+    function updateConfigSummary(){
+      const carroDiario = (config.carroMensal || 0) / 30;
+      const metaDiaria = (config.metaMensal || 0) / (config.diasTrabalhados || 1);
+      const metaSemanal = (config.metaMensal || 0) / 4;
+
+      document.getElementById('resConfig').innerHTML = `
+        <div class="card">
+          <h3>Resumo das Configurações</h3>
+          <p><strong>Carro (diário):</strong> R$ ${carroDiario.toFixed(2)}</p>
+          <p><strong>Meta mensal:</strong> R$ ${(config.metaMensal || 0).toFixed(2)}</p>
+          <p><strong>Meta semanal (aprox.):</strong> R$ ${metaSemanal.toFixed(2)}</p>
+          <p><strong>Meta diária (base dias trabalhados):</strong> R$ ${metaDiaria.toFixed(2)}</p>
+          <p class="small">(Dias considerados no cálculo: ${config.diasTrabalhados})</p>
+        </div>
+      `;
+
+      // Atualizar campos na aba de cálculo
+      document.getElementById('carroDiario').value = carroDiario.toFixed(2);
+      document.getElementById('metaDiaria').value = metaDiaria.toFixed(2);
+      
+      // Atualizar informação do combustível do dia anterior
+      updateCombustivelAnteriorInfo();
+      
+      // Atualizar meta para o próximo dia
+      renderMetaProximoDia();
+      renderSemaforo();
+      renderProgressoCarro();
+    }
+
+    function updateCombustivelAnteriorInfo() {
+      if (historico.length > 0) {
+        const hoje = new Date();
+        const mesAtual = hoje.getMonth();
+        const anoAtual = hoje.getFullYear();
+        
+        // Encontrar o último registro do mês atual
+        const registrosMesAtual = historico.filter(item => {
+          const [dia, mes, ano] = item.date.split('/').map(Number);
+          return (mes - 1) === mesAtual && ano === anoAtual;
+        });
+        
+        if (registrosMesAtual.length > 0) {
+          const ultimoDia = registrosMesAtual[0];
+          document.getElementById('combustivelAnteriorValor').textContent = ultimoDia.combustivel.toFixed(2);
+          document.getElementById('combustivelAnteriorInfo').style.display = 'block';
+          return;
+        }
+      }
+      document.getElementById('combustivelAnteriorInfo').style.display = 'none';
+    }
+
+    function onSaveConfig(){
+      const carro = parseFloat(document.getElementById('inpCarroMensal').value) || 0;
+      const meta = parseFloat(document.getElementById('inpMetaMensal').value) || 0;
+      const dias = parseInt(document.getElementById('inpDiasMes').value) || 0;
+      
+      if(dias <= 0){ 
+        alert('Informe a quantidade de dias trabalhados no mês (maior que 0).'); 
+        return; 
+      }
+      
+      config.carroMensal = carro; 
+      config.metaMensal = meta; 
+      config.diasTrabalhados = dias;
+      
+      saveConfig(); 
+      renderConfigForm(); 
+      
+      // Mostrar mensagem de sucesso
+      document.getElementById('resConfig').innerHTML = `
+        <div class="alert alert-success">
+          ✅ Configurações salvas com sucesso!
+        </div>
+      ` + document.getElementById('resConfig').innerHTML;
+    }
+
+    function onResetConfig(){ 
+      if(confirm('Tem certeza que deseja resetar as configurações para os valores padrão?')){ 
+        config = {carroMensal:0, metaMensal:0, diasTrabalhados:22}; 
+        saveConfig(); 
+        renderConfigForm(); 
+      } 
+    }
+
+    // --- Historico helpers
+    function loadHistorico(){ 
+      try{ 
+        const raw = localStorage.getItem(KEY_HIST); 
+        return raw ? JSON.parse(raw) : []; 
+      } catch(e) {
+        console.error("Erro ao carregar histórico:", e);
+        return [];
+      }
+    }
+    
+    function saveHistorico(){ 
+      localStorage.setItem(KEY_HIST, JSON.stringify(historico)); 
+    }
+
+    function onAddDia(){
+      const dataInput = document.getElementById('inpData').value;
+      let dataObj;
+      
+      if (dataInput) {
+        dataObj = new Date(dataInput + 'T00:00:00');
+      } else {
+        dataObj = new Date();
+      }
+      
+      const dia = dataObj.toLocaleDateString('pt-BR');
+      const bruto = parseFloat(document.getElementById('inpBruto').value) || 0;
+      const comb = parseFloat(document.getElementById('inpComb').value) || 0;
+      const carroDiario = (config.carroMensal || 0) / 30;
+      
+      if(bruto <= 0){ 
+        alert('Informe o valor bruto do dia.'); 
+        return; 
+      }
+
+      const liquido = +(bruto - comb - carroDiario).toFixed(2);
+      
+      // Calcular meta diária
+      const metaDiaria = (config.metaMensal || 0) / (config.diasTrabalhados || 1);
+      const metaAtingida = liquido >= metaDiaria;
+      const diferenca = Math.abs(liquido - metaDiaria).toFixed(2);
+
+      // Verificar se já existe registro para esta data
+      const indexExistente = historico.findIndex(item => item.date === dia);
+      
+      if (indexExistente !== -1) {
+        if (!confirm(`Já existe um registro para ${dia}. Deseja substituí-lo?`)) {
+          return;
+        }
+        historico.splice(indexExistente, 1);
+      }
+      
+      historico.unshift({
+        id: Date.now(),
+        date: dia,
+        bruto: bruto,
+        combustivel: comb,
+        liquido: liquido,
+        carroDiario: carroDiario,
+        metaAtingida: metaAtingida
+      });
+      
+      saveHistorico();
+      
+      // Exibir resultado
+      let alertClass = 'alert-success';
+      let mensagemStatus = '';
+      
+      if (metaAtingida) {
+        mensagemStatus = `✅ Meta diária atingida! Excedeu em R$ ${diferenca}`;
+      } else {
+        alertClass = 'alert-warning';
+        mensagemStatus = `⚠️ Meta diária não atingida! Faltaram R$ ${diferenca}`;
+      }
+      
+      document.getElementById('resCalc').innerHTML = `
+        <div class="alert ${alertClass}">
+          <strong>Dia registrado com sucesso!</strong><br>
+          ${mensagemStatus}
+        </div>
+        <div class="card">
+          <h3>Resumo do Dia</h3>
+          <p><strong>Data:</strong> ${dia}</p>
+          <p><strong>Bruto:</strong> R$ ${bruto.toFixed(2)}</p>
+          <p><strong>Combustível:</strong> R$ ${comb.toFixed(2)}</p>
+          <p><strong>Custo do carro:</strong> R$ ${carroDiario.toFixed(2)}</p>
+          <p><strong>Líquido:</strong> R$ ${liquido.toFixed(2)}</p>
+          <p><strong>Meta diária:</strong> R$ ${metaDiaria.toFixed(2)}</p>
+        </div>
+      `;
+      
+      // Limpar campos
+      const hoje = new Date();
+      const hojeFormatado = hoje.toISOString().split('T')[0];
+      document.getElementById('inpData').value = hojeFormatado;
+      document.getElementById('inpBruto').value = '';
+      document.getElementById('inpComb').value = '';
+      
+      // Atualizar histórico e calendário
+      renderHistorico();
+      renderCalendario();
+      updateCombustivelAnteriorInfo();
+      renderMetaProximoDia();
+      renderSemaforo();
+      renderProgressoCarro();
+      
+      // Focar no campo de valor bruto novamente
+      document.getElementById('inpBruto').focus();
+    }
+
+    function renderHistorico(){
+      const tb = document.getElementById('tbDias'); 
+      tb.innerHTML = '';
+      
+      let totalComb = 0, totalLiq = 0;
+      
+      // Filtrar apenas registros do mês corrente
+      const hoje = new Date();
+      const mesAtual = hoje.getMonth();
+      const anoAtual = hoje.getFullYear();
+      
+      const historicoMesAtual = historico.filter(item => {
+        const [dia, mes, ano] = item.date.split('/').map(Number);
+        return (mes - 1) === mesAtual && ano === anoAtual;
+      });
+      
+      if (historicoMesAtual.length === 0) {
+        tb.innerHTML = `
+          <tr>
+            <td colspan="6" style="text-align: center; padding: 20px;">
+              Nenhum registro encontrado para este mês. Adicione dias na aba "Cálculo Diário".
+            </td>
+          </tr>
+        `;
+      } else {
+        historicoMesAtual.forEach(item => {
+          totalComb += Number(item.combustivel || 0);
+          totalLiq += Number(item.liquido || 0);
+          
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${item.date}</td>
+            <td>R$ ${Number(item.bruto).toFixed(2)}</td>
+            <td>R$ ${Number(item.combustivel).toFixed(2)}</td>
+            <td>R$ ${Number(item.liquido).toFixed(2)}</td>
+            <td>
+              ${item.metaAtingida ? 
+                '<span style="color: var(--success); font-weight: bold;">✅ Sim</span>' : 
+                '<span style="color: var(--danger); font-weight: bold;">❌ Não</span>'}
+            </td>
+            <td>
+              <div class="actions">
+                <button data-id="${item.id}" class="btn-edit btn-success small">Editar</button>
+                <button data-id="${item.id}" class="btn-del btn-danger small">Excluir</button>
+              </div>
+            </td>
+          `;
+          tb.appendChild(tr);
+        });
+      }
+
+      const metaMensal = config.metaMensal || 0;
+      const hojeObj = new Date();
+      const mesAtualObj = hojeObj.getMonth();
+      const anoAtualObj = hojeObj.getFullYear();
+      
+      // Calcular totais do mês atual
+      const totalLiqMes = historicoMesAtual.reduce((acc, item) => acc + item.liquido, 0);
+      const totalCombMes = historicoMesAtual.reduce((acc, item) => acc + item.combustivel, 0);
+      
+      document.getElementById('relComb').innerText = `R$ ${totalCombMes.toFixed(2)}`;
+      document.getElementById('relLiq').innerText = `R$ ${totalLiqMes.toFixed(2)}`;
+      document.getElementById('relMeta').innerText = `R$ ${metaMensal.toFixed(2)}`;
+      
+      const falta = (metaMensal - totalLiqMes);
+      const faltaElement = document.getElementById('relFalta');
+      faltaElement.innerText = `R$ ${Math.abs(falta).toFixed(2)}`;
+      
+      if (falta >= 0) {
+        faltaElement.className = 'stat-value negative';
+      } else {
+        faltaElement.className = 'stat-value positive';
+      }
+      
+      document.getElementById('relDias').innerText = historicoMesAtual.length;
+      
+      // Calcular dias restantes
+      const diasRegistrados = historicoMesAtual.length;
+      const diasTrabalhados = config.diasTrabalhados || 0;
+      const diasRestantes = Math.max(0, diasTrabalhados - diasRegistrados);
+      document.getElementById('diasRestantes').textContent = diasRestantes;
+      
+      // Atualizar barra de progresso da meta
+      const porcentagemMeta = metaMensal > 0 ? Math.min(100, (totalLiqMes / metaMensal) * 100) : 0;
+      const progressoMetaFill = document.getElementById('progressoMetaFill');
+      const progressoMetaPorcentagem = document.getElementById('progressoMetaPorcentagem');
+      const progressoMetaTotal = document.getElementById('progressoMetaTotal');
+      
+      progressoMetaFill.style.width = `${porcentagemMeta}%`;
+      progressoMetaPorcentagem.textContent = `${porcentagemMeta.toFixed(1)}%`;
+      progressoMetaTotal.textContent = `R$ ${metaMensal.toFixed(2)}`;
+      
+      // Ajustar cor da barra de progresso
+      if (porcentagemMeta >= 100) {
+        progressoMetaFill.className = 'progress-fill progress-success';
+      } else if (porcentagemMeta >= 70) {
+        progressoMetaFill.className = 'progress-fill progress-warning';
+      } else {
+        progressoMetaFill.className = 'progress-fill progress-danger';
+      }
+
+      // Adicionar event listeners para botões de exclusão
+      document.querySelectorAll('.btn-del').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const id = Number(btn.getAttribute('data-id'));
+          if(confirm('Tem certeza que deseja excluir este registro?')){ 
+            historico = historico.filter(h => h.id !== id); 
+            saveHistorico(); 
+            renderHistorico(); 
+            renderCalendario();
+            updateCombustivelAnteriorInfo();
+            renderMetaProximoDia();
+            renderSemaforo();
+            renderProgressoCarro();
+          }
+        });
+      });
+      
+      // Adicionar event listeners para botões de edição
+      document.querySelectorAll('.btn-edit').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const id = Number(btn.getAttribute('data-id'));
+          abrirModalEdicao(id);
+        });
+      });
+    }
+
+    function abrirModalEdicao(id) {
+      const registro = historico.find(h => h.id === id);
+      if (!registro) return;
+      
+      document.getElementById('editId').value = id;
+      
+      // Converter data do formato brasileiro para input date
+      const [dia, mes, ano] = registro.date.split('/');
+      const dataFormatada = `${ano}-${mes.padStart(2, '0')}-${dia.padStart(2, '0')}`;
+      
+      document.getElementById('editData').value = dataFormatada;
+      document.getElementById('editBruto').value = registro.bruto;
+      document.getElementById('editComb').value = registro.combustivel;
+      
+      document.getElementById('modalEdicao').classList.add('active');
+    }
+    
+    function fecharModalEdicao() {
+      document.getElementById('modalEdicao').classList.remove('active');
+    }
+    
+    function salvarEdicao() {
+      const id = Number(document.getElementById('editId').value);
+      const dataInput = document.getElementById('editData').value;
+      
+      let dataObj;
+      if (dataInput) {
+        dataObj = new Date(dataInput + 'T00:00:00');
+      } else {
+        dataObj = new Date();
+      }
+      
+      const dia = dataObj.toLocaleDateString('pt-BR');
+      const bruto = parseFloat(document.getElementById('editBruto').value) || 0;
+      const comb = parseFloat(document.getElementById('editComb').value) || 0;
+      const carroDiario = (config.carroMensal || 0) / 30;
+      
+      if (bruto <= 0) {
+        alert('Informe o valor bruto do dia.');
+        return;
+      }
+      
+      const registroIndex = historico.findIndex(h => h.id === id);
+      if (registroIndex === -1) return;
+      
+      const liquido = +(bruto - comb - carroDiario).toFixed(2);
+      const metaDiaria = (config.metaMensal || 0) / (config.diasTrabalhados || 1);
+      const metaAtingida = liquido >= metaDiaria;
+      
+      historico[registroIndex] = {
+        ...historico[registroIndex],
+        date: dia,
+        bruto: bruto,
+        combustivel: comb,
+        liquido: liquido,
+        metaAtingida: metaAtingida
+      };
+      
+      saveHistorico();
+      renderHistorico();
+      renderCalendario();
+      updateCombustivelAnteriorInfo();
+      renderMetaProximoDia();
+      renderSemaforo();
+      renderProgressoCarro();
+      
+      fecharModalEdicao();
+      
+      // Mostrar mensagem de sucesso
+      document.getElementById('resCalc').innerHTML = `
+        <div class="alert alert-success">
+          ✅ Registro atualizado com sucesso!
+        </div>
+      `;
+    }
+
+    function onClear(){ 
+      if(historico.length === 0) {
+        alert('Não há registros para limpar.');
+        return;
+      }
+      
+      if(confirm('Tem certeza que deseja limpar todo o histórico? Esta ação não pode ser desfeita.')){ 
+        historico = []; 
+        saveHistorico(); 
+        renderHistorico(); 
+        renderCalendario();
+        updateCombustivelAnteriorInfo();
+        renderMetaProximoDia();
+        renderSemaforo();
+        renderProgressoCarro();
+      } 
+    }
+
+    function onExportCSV(){ 
+      const hoje = new Date();
+      const mesAtual = hoje.getMonth();
+      const anoAtual = hoje.getFullYear();
+      
+      // Filtrar apenas registros do mês atual
+      const historicoMesAtual = historico.filter(item => {
+        const [dia, mes, ano] = item.date.split('/').map(Number);
+        return (mes - 1) === mesAtual && ano === anoAtual;
+      });
+      
+      if(historicoMesAtual.length === 0){ 
+        alert('Nenhum dado para exportar.'); 
+        return; 
+      }
+      
+      const header = ['Data', 'Bruto (R$)', 'Combustível (R$)', 'Líquido (R$)', 'Custo Carro (R$)', 'Meta Atingida'];
+      const rows = historicoMesAtual.map(r => [
+        r.date, 
+        r.bruto.toFixed(2), 
+        r.combustivel.toFixed(2), 
+        r.liquido.toFixed(2),
+        r.carroDiario.toFixed(2),
+        r.metaAtingida ? 'Sim' : 'Não'
+      ]);
+      
+      const csv = [header.join(','), ...rows.map(r => r.join(','))].join('\n');
+      const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); 
+      a.href = url; 
+      a.download = `historico_${mesAtual+1}_${anoAtual}.csv`; 
+      a.click(); 
+      URL.revokeObjectURL(url);
+    }
+    
+    // --- Calendário
+    function renderCalendario() {
+      const meses = [
+        'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+        'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+      ];
+      
+      document.getElementById('calendarioMesAno').textContent = `${meses[calendarioMes]} ${calendarioAno}`;
+      
+      const calendarioGrid = document.getElementById('calendarioGrid');
+      calendarioGrid.innerHTML = '';
+            // Cabeçalho dos dias da semana
+      const diasSemana = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+      diasSemana.forEach(dia => {
+        const diaElement = document.createElement('div');
+        diaElement.className = 'calendario-dia-header';
+        diaElement.textContent = dia;
+        diaElement.style.textAlign = 'center';
+        diaElement.style.fontWeight = 'bold';
+        calendarioGrid.appendChild(diaElement);
+      });
+      
+      // Primeiro dia do mês
+      const primeiroDia = new Date(calendarioAno, calendarioMes, 1);
+      const ultimoDia = new Date(calendarioAno, calendarioMes + 1, 0);
+      const diasNoMes = ultimoDia.getDate();
+      const primeiroDiaSemana = primeiroDia.getDay();
+      
+      // Dias vazios antes do primeiro dia
+      for (let i = 0; i < primeiroDiaSemana; i++) {
+        const diaVazio = document.createElement('div');
+        diaVazio.className = 'calendario-dia dia-vazio';
+        calendarioGrid.appendChild(diaVazio);
+      }
+      
+      // Dias do mês
+      const hoje = new Date();
+      for (let dia = 1; dia <= diasNoMes; dia++) {
+        const data = new Date(calendarioAno, calendarioMes, dia);
+        const dataStr = data.toLocaleDateString('pt-BR');
+        const registro = historico.find(item => item.date === dataStr);
+        
+        const diaElement = document.createElement('div');
+        diaElement.className = 'calendario-dia';
+        
+        if (data.getDate() === hoje.getDate() && 
+            data.getMonth() === hoje.getMonth() && 
+            data.getFullYear() === hoje.getFullYear()) {
+          diaElement.classList.add('today');
+        }
+        
+        if (registro) {
+          diaElement.classList.add('has-data');
+          // Adicionar classe baseada na meta atingida
+          if (registro.metaAtingida) {
+            diaElement.classList.add('meta-atingida');
+          } else {
+            diaElement.classList.add('meta-nao-atingida');
+          }
+        }
+        
+        let conteudo = '';
+        if (registro) {
+          const metaStatus = registro.metaAtingida ? 
+            '<span style="color: var(--success);">✅</span>' : 
+            '<span style="color: var(--danger);">❌</span>';
+            
+          conteudo = `
+            <p><strong>Bruto:</strong> R$ ${registro.bruto.toFixed(2)}</p>
+            <p><strong>Comb:</strong> R$ ${registro.combustivel.toFixed(2)}</p>
+            <p><strong>Líq:</strong> R$ ${registro.liquido.toFixed(2)}</p>
+            <p><strong>Meta:</strong> ${metaStatus}</p>
+          `;
+        } else {
+          conteudo = `<p class="small">Sem registro</p>`;
+        }
+        
+        diaElement.innerHTML = `
+          <div class="calendario-dia-header">
+            <span class="calendario-dia-num">${dia}</span>
+            <span class="calendario-dia-semana">${diasSemana[data.getDay()]}</span>
+          </div>
+          <div class="calendario-dia-content">
+            ${conteudo}
+          </div>
+        `;
+        
+        calendarioGrid.appendChild(diaElement);
+      }
+    }
+    
+    function prevMonth() {
+      calendarioMes--;
+      if (calendarioMes < 0) {
+        calendarioMes = 11;
+        calendarioAno--;
+      }
+      renderCalendario();
+    }
+    
+    function nextMonth() {
+      calendarioMes++;
+      if (calendarioMes > 11) {
+        calendarioMes = 0;
+        calendarioAno++;
+      }
+      renderCalendario();
+    }
+    
+    function goToToday() {
+      const hoje = new Date();
+      calendarioMes = hoje.getMonth();
+      calendarioAno = hoje.getFullYear();
+      renderCalendario();
+    }
+    
+    // --- Meta para o próximo dia
+    function renderMetaProximoDia() {
+      const metaMensal = config.metaMensal || 0;
+      const diasTrabalhados = config.diasTrabalhados || 0;
+      
+      // Calcular o total líquido do mês atual
+      const hoje = new Date();
+      const mesAtual = hoje.getMonth();
+      const anoAtual = hoje.getFullYear();
+      
+      const historicoMesAtual = historico.filter(item => {
+        const [dia, mes, ano] = item.date.split('/').map(Number);
+        return (mes - 1) === mesAtual && ano === anoAtual;
+      });
+      
+      const totalLiqMes = historicoMesAtual.reduce((acc, item) => acc + item.liquido, 0);
+      const diasRegistrados = historicoMesAtual.length;
+      const diasRestantes = Math.max(0, diasTrabalhados - diasRegistrados);
+      
+      // Calcular a meta restante
+      const metaRestante = Math.max(0, metaMensal - totalLiqMes);
+      
+      // Calcular a média necessária por dia para bater a meta
+      const mediaNecessaria = diasRestantes > 0 ? (metaRestante / diasRestantes) : 0;
+      
+      // Atualizar o campo na aba de cálculo
+      document.getElementById('metaProximoDia').value = mediaNecessaria.toFixed(2);
+      
+      // Atualizar o valor na aba de relatórios
+      document.getElementById('metaAmanhaValor').textContent = `R$ ${mediaNecessaria.toFixed(2)}`;
+    }
+    
+    // --- Semáforo
+    function renderSemaforo() {
+      const metaMensal = config.metaMensal || 0;
+      const diasTrabalhados = config.diasTrabalhados || 0;
+      
+      // Calcular o total líquido do mês atual
+      const hoje = new Date();
+      const mesAtual = hoje.getMonth();
+      const anoAtual = hoje.getFullYear();
+      
+      const historicoMesAtual = historico.filter(item => {
+        const [dia, mes, ano] = item.date.split('/').map(Number);
+        return (mes - 1) === mesAtual && ano === anoAtual;
+      });
+      
+      const totalLiqMes = historicoMesAtual.reduce((acc, item) => acc + item.liquido, 0);
+      const diasRegistrados = historicoMesAtual.length;
+      const diasRestantes = Math.max(0, diasTrabalhados - diasRegistrados);
+      
+      // Calcular a meta restante
+      const metaRestante = Math.max(0, metaMensal - totalLiqMes);
+      
+      // Calcular a média necessária por dia para bater a meta
+      const mediaNecessaria = diasRestantes > 0 ? (metaRestante / diasRestantes) : 0;
+      
+      // Calcular a média atual
+      const mediaAtual = diasRegistrados > 0 ? (totalLiqMes / diasRegistrados) : 0;
+      
+      // Determinar qual semáforo ativar
+      const semaforoBolas = document.querySelectorAll('.semaforo-bolha');
+      semaforoBolas.forEach(bola => bola.classList.remove('active'));
+      
+      let semaforoAtivo = 1; // 1 = vermelho, 2 = amarelo, 3 = verde
+      
+      if (diasRestantes > 0) {
+        if (mediaAtual >= mediaNecessaria * 1.1) {
+          // Está muito acima da meta necessária - pode diminuir
+          semaforoAtivo = 3;
+        } else if (mediaAtual >= mediaNecessaria * 0.9) {
+          // Está próximo da meta necessária - manter
+          semaforoAtivo = 2;
+        } else {
+          // Está abaixo da meta necessária - aumentar
+          semaforoAtivo = 1;
+        }
+      } else {
+        // Não há mais dias restantes
+        if (totalLiqMes >= metaMensal) {
+          semaforoAtivo = 3; // Meta atingida
+        } else {
+          semaforoAtivo = 1; // Meta não atingida
+        }
+      }
+      
+      // Ativar o semáforo correspondente
+      semaforoBolas[semaforoAtivo - 1].classList.add('active');
+    }
+    
+    // --- Progresso do Carro
+    function renderProgressoCarro() {
+      const carroMensal = config.carroMensal || 0;
+      
+      // Calcular o acumulado do carro no mês atual
+      const hoje = new Date();
+      const mesAtual = hoje.getMonth();
+      const anoAtual = hoje.getFullYear();
+      
+      const historicoMesAtual = historico.filter(item => {
+        const [dia, mes, ano] = item.date.split('/').map(Number);
+        return (mes - 1) === mesAtual && ano === anoAtual;
+      });
+      
+      const acumuladoCarro = historicoMesAtual.reduce((acc, item) => acc + item.carroDiario, 0);
+      const restanteCarro = Math.max(0, carroMensal - acumuladoCarro);
+      
+      // Calcular porcentagem
+      const porcentagemCarro = carroMensal > 0 ? (acumuladoCarro / carroMensal) * 100 : 0;
+      
+      // Atualizar barra de progresso
+      document.getElementById('progressoCarroFill').style.width = `${porcentagemCarro}%`;
+      document.getElementById('carroAcumulado').textContent = `R$ ${acumuladoCarro.toFixed(2)}`;
+      document.getElementById('carroPorcentagem').textContent = `${porcentagemCarro.toFixed(1)}%`;
+      document.getElementById('carroTotal').textContent = `R$ ${carroMensal.toFixed(2)}`;
+      
+      // Calcular semanas
+      const semanasGrid = document.getElementById('semanasCarro');
+      semanasGrid.innerHTML = '';
+      
+      const valorPorSemana = carroMensal / 4;
+      const diaDoMes = hoje.getDate();
+      const semanaAtual = Math.min(4, Math.ceil(diaDoMes / 7));
+      
+      for (let semana = 1; semana <= 4; semana++) {
+        const valorEsperado = valorPorSemana * semana;
+        const valorMinimo = valorPorSemana * (semana - 1);
+        const acumuladoAteSemana = Math.min(acumuladoCarro, valorEsperado);
+        const porcentagemSemana = valorPorSemana > 0 ? 
+          Math.min(100, ((acumuladoAteSemana - valorMinimo) / valorPorSemana) * 100) : 0;
+        
+        const semanaCard = document.createElement('div');
+        semanaCard.className = 'semana-card';
+        
+        if (semana === semanaAtual) {
+          semanaCard.classList.add('active');
+        } else if (semana < semanaAtual) {
+          semanaCard.classList.add('completed');
+        }
+        
+        semanaCard.innerHTML = `
+          <div style="font-weight: bold; margin-bottom: 4px;">Semana ${semana}</div>
+          <div class="progress-bar" style="height: 8px; margin: 4px 0;">
+            <div class="progress-fill" style="width: ${porcentagemSemana}%; background: var(--primary);"></div>
+          </div>
+          <div style="font-size: 11px;">
+            R$ ${(acumuladoAteSemana - valorMinimo).toFixed(2)} / R$ ${valorPorSemana.toFixed(2)}
+          </div>
+        `;
+        
+        semanasGrid.appendChild(semanaCard);
+      }
+    }
+    
+    // --- Backup helpers
+    function loadBackups() {
+      try {
+        const raw = localStorage.getItem(KEY_BACKUPS);
+        return raw ? JSON.parse(raw) : [];
+      } catch(e) {
+        console.error("Erro ao carregar backups:", e);
+        return [];
+      }
+    }
+    
+    function saveBackups() {
+      localStorage.setItem(KEY_BACKUPS, JSON.stringify(backups));
+    }
+    
+    function renderBackups() {
+      const backupList = document.getElementById('backupList');
+      backupList.innerHTML = '';
+      
+      if (backups.length === 0) {
+        backupList.innerHTML = `
+          <div class="backup-item">
+            <div class="backup-info">
+              <span class="backup-name">Nenhum backup encontrado</span>
+            </div>
+          </div>
+        `;
+        return;
+      }
+      
+      backups.forEach((backup, index) => {
+        const backupItem = document.createElement('div');
+        backupItem.className = 'backup-item';
+        
+        backupItem.innerHTML = `
+          <div class="backup-info">
+            <span class="backup-name">${backup.nome}</span>
+            <span class="backup-date">Criado em: ${backup.dataCriacao}</span>
+            <span class="backup-date">Registros: ${backup.dados.length}</span>
+          </div>
+          <div class="backup-actions">
+            <button class="btn-success" data-index="${index}">Restaurar</button>
+            <button class="btn-danger" data-index="${index}">Excluir</button>
+          </div>
+        `;
+        
+        backupList.appendChild(backupItem);
+      });
+      
+      // Adicionar event listeners para os botões
+      document.querySelectorAll('.backup-actions .btn-success').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const index = Number(btn.getAttribute('data-index'));
+          restaurarBackup(index);
+        });
+      });
+      
+      document.querySelectorAll('.backup-actions .btn-danger').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const index = Number(btn.getAttribute('data-index'));
+          excluirBackup(index);
+        });
+      });
+    }
+    
+    function criarBackupManual() {
+      if (historico.length === 0) {
+        alert('Não há dados para fazer backup.');
+        return;
+      }
+      
+      const hoje = new Date();
+      const mesAtual = hoje.getMonth();
+      const anoAtual = hoje.getFullYear();
+      
+      // Verificar se já existe um backup deste mês
+      const backupExistente = backups.find(b => 
+        b.nome === `Backup_${mesAtual+1}_${anoAtual}`
+      );
+      
+      if (backupExistente) {
+        if (!confirm('Já existe um backup deste mês. Deseja substituí-lo?')) {
+          return;
+        }
+            // Remover o backup existente
+        backups = backups.filter(b => 
+          b.nome !== `Backup_${mesAtual+1}_${anoAtual}`
+        );
+      }
+      
+      const backup = {
+        nome: `Backup_${mesAtual+1}_${anoAtual}`,
+        dataCriacao: hoje.toLocaleDateString('pt-BR'),
+        dados: [...historico]
+      };
+      
+      backups.unshift(backup);
+      saveBackups();
+      renderBackups();
+      
+      alert(`Backup criado com sucesso: ${backup.nome}`);
+    }
+    
+    function verificarBackupAutomatico() {
+      const hoje = new Date();
+      const ultimoDia = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0).getDate();
+      
+      // Se não é o último dia do mês, não faz nada
+      if (hoje.getDate() !== ultimoDia) {
+        return;
+      }
+      
+      const mesAtual = hoje.getMonth();
+      const anoAtual = hoje.getFullYear();
+      
+      // Verificar se já existe um backup deste mês
+      const backupExistente = backups.find(b => 
+        b.nome === `Backup_${mesAtual+1}_${anoAtual}`
+      );
+      
+      if (!backupExistente && historico.length > 0) {
+        // Criar backup automático
+        const backup = {
+          nome: `Backup_${mesAtual+1}_${anoAtual}`,
+          dataCriacao: hoje.toLocaleDateString('pt-BR'),
+          dados: [...historico]
+        };
+        
+        backups.unshift(backup);
+        saveBackups();
+        
+        // Limpar o histórico para o próximo mês
+        historico = [];
+        saveHistorico();
+        
+        // Atualizar a interface
+        renderHistorico();
+        renderCalendario();
+        updateCombustivelAnteriorInfo();
+        renderBackups();
+        renderMetaProximoDia();
+        renderSemaforo();
+        renderProgressoCarro();
+        
+        alert(`Backup automático do mês ${mesAtual+1}/${anoAtual} realizado com sucesso! Histórico limpo para o novo mês.`);
+      }
+    }
+    
+    function restaurarBackup(index) {
+      if (index < 0 || index >= backups.length) return;
+      
+      if (historico.length > 0) {
+        if (!confirm('Restaurar este backup substituirá todos os dados atuais. Deseja continuar?')) {
+          return;
+        }
+      }
+      
+      const backup = backups[index];
+      historico = [...backup.dados];
+      saveHistorico();
+      
+      renderHistorico();
+      renderCalendario();
+      updateCombustivelAnteriorInfo();
+      renderMetaProximoDia();
+      renderSemaforo();
+      renderProgressoCarro();
+      
+      alert(`Backup "${backup.nome}" restaurado com sucesso!`);
+    }
+    
+    function excluirBackup(index) {
+      if (index < 0 || index >= backups.length) return;
+      
+      const backup = backups[index];
+      if (!confirm(`Tem certeza que deseja excluir o backup "${backup.nome}"?`)) {
+        return;
+      }
+      
+      backups.splice(index, 1);
+      saveBackups();
+      renderBackups();
+      
+      alert(`Backup "${backup.nome}" excluído com sucesso!`);
+    }
+
+    // --- render initial
+    function renderCalcFields(){
+      const carroDiario = (config.carroMensal || 0) / 30;
+      const metaDiaria = (config.metaMensal || 0) / (config.diasTrabalhados || 1);
+      
+      document.getElementById('carroDiario').value = carroDiario.toFixed(2);
+      document.getElementById('metaDiaria').value = metaDiaria.toFixed(2);
+      updateCombustivelAnteriorInfo();
+    }
+  </script>
+</body>
+</html>
